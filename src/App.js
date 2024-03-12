@@ -6,7 +6,8 @@ import { GoogleLogin } from '@react-oauth/google';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showCreateAssessmentButton, setShowCreateAssessmentButton] = useState(false);
-  const [googleSheetsLink, setGoogleSheetsLink] = useState('');
+  const [studentListLink, setStudentListLink] = useState('');
+  const [rubricSheetLink, setRubricSheetLink] = useState('');
   const [googleFormsLink, setGoogleFormsLink] = useState('');
 
   const handleLoginSuccess = credentialResponse => {
@@ -23,15 +24,22 @@ function App() {
     // Logic to handle create assessment button click
     console.log('Create assessment button clicked');
     // Prompt user to input Google Sheets and Google Forms links
-    const sheetsLink = prompt('Enter Google Sheets link:');
-    setGoogleSheetsLink(sheetsLink);
+    const studentList = prompt('Enter Student List Google Sheets link:');
+    setStudentListLink(studentList);
+    const rubricSheet = prompt('Enter Rubric Sheet Google Sheets link:');
+    setRubricSheetLink(rubricSheet);
     const formsLink = prompt('Enter Google Forms link:');
     setGoogleFormsLink(formsLink);
   };
 
-  const handleSheetsSubmit = () => {
-    // Open Google Sheets link
-    window.open(googleSheetsLink, '_blank');
+  const handleStudentListSubmit = () => {
+    // Open Student List Google Sheets link
+    window.open(studentListLink, '_blank');
+  };
+
+  const handleRubricSheetSubmit = () => {
+    // Open Rubric Sheet Google Sheets link
+    window.open(rubricSheetLink, '_blank');
   };
 
   const handleFormsSubmit = () => {
@@ -53,11 +61,14 @@ function App() {
         {isLoggedIn && showCreateAssessmentButton && (
           <div>
             <button onClick={handleCreateAssessmentClick}>Create New Assessment</button>
-            {googleSheetsLink && (
-              <button onClick={handleSheetsSubmit}>Submit Google Sheets</button>
+            {studentListLink && (
+              <button onClick={handleStudentListSubmit}>View Student List</button>
+            )}
+            {rubricSheetLink && (
+              <button onClick={handleRubricSheetSubmit}>View Rubric Sheet</button>
             )}
             {googleFormsLink && (
-              <button onClick={handleFormsSubmit}>Submit Google Forms</button>
+              <button onClick={handleFormsSubmit}>Open Google Forms</button>
             )}
           </div>
         )}
