@@ -9,6 +9,8 @@ function App() {
   const [studentListLink, setStudentListLink] = useState('');
   const [rubricSheetLink, setRubricSheetLink] = useState('');
   const [googleFormsLink, setGoogleFormsLink] = useState('');
+  const [title, setTitle] = useState('');
+  const [file, setFile] = useState('');
 
   const handleLoginSuccess = credentialResponse => {
     console.log(credentialResponse);
@@ -47,6 +49,14 @@ function App() {
     window.open(googleFormsLink, '_blank');
   };
 
+  const submitImage = async (e) =>{
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title",title)
+    formData.append("file",file)
+    console.log(title,file)
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -60,6 +70,29 @@ function App() {
         )}
         {isLoggedIn && showCreateAssessmentButton && (
           <div>
+            <h4>Upload PDF in React</h4>
+            <br />
+            <form onSubmit={submitImage}> {/* Move onSubmit handler to form */}
+              <input 
+                type="text" 
+                className='form-control' 
+                placeholder='Title' 
+                required 
+                onChange={(e)=> setTitle(e.target.value)}
+              />
+  
+              <br />
+              <input 
+                type="file" 
+                className='form-control' 
+                accept="application/pdf"
+                required
+                onChange={(e)=>setFile(e.target.files[0])}
+              />
+              <br />
+  
+              <button className='btn btn-primary' type='submit'> Submit </button>
+            </form>
             <button onClick={handleCreateAssessmentClick}>Create New Assessment</button>
             {studentListLink && (
               <button onClick={handleStudentListSubmit}>View Student List</button>
@@ -75,6 +108,7 @@ function App() {
       </header>
     </div>
   );
+  
 }
 
 export default App;
