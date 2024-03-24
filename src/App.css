@@ -22,6 +22,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  text-align: center;
 }
 
 .App-link {
@@ -35,4 +36,23 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.assessment-fields {
+  margin: 20px auto;
+  width: 50%;
+  border: 2px solid #ccc;
+  padding: 20px;
+}
+
+.assessment-fields label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.google-sheets-link {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px auto;
+  width: 50%;
 }
