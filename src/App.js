@@ -16,6 +16,7 @@ function App() {
   const [file, setFile] = useState('');
   const [allImage, setAllImage] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
+  const [additionalFields, setAdditionalFields] = useState([]);
 
   useEffect(() => {
     getPdf();
@@ -82,6 +83,38 @@ function App() {
     setPdfFile(`http://localhost:5000/files/${pdf}`);
   };
 
+  const handleAddFieldClick = () => {
+    setAdditionalFields([...additionalFields, { title: '', file: '' }]);
+  };
+
+  const handleAdditionalFieldChange = (index, key, value) => {
+    const updatedFields = [...additionalFields];
+    updatedFields[index][key] = value;
+    setAdditionalFields(updatedFields);
+  };
+
+  const handleAdditionalFieldSubmit = async (e, index) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("title", additionalFields[index].title);
+    formData.append("file", additionalFields[index].file);
+    try {
+      const result = await axios.post(
+        "http://localhost:5000/upload-files",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (result.data.status === "ok") {
+        alert("Uploaded Successfully!!!");
+        getPdf();
+      }
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -124,6 +157,7 @@ function App() {
                 </div>
                 <br />
                 <form onSubmit={submitImage}>
+
                   <input
                     type="text"
                     className='form-control'
@@ -155,6 +189,33 @@ function App() {
                     );
                   })}
                 </div>
+                {additionalFields.map((field, index) => (
+                  <div key={index}>
+                    <h4>Additional PDF {index + 1}</h4>
+                    <form onSubmit={(e) => handleAdditionalFieldSubmit(e, index)}>
+                      <input
+                        type="text"
+                        className='form-control'
+                        placeholder='Title'
+                        required
+                        value={field.title}
+                        onChange={(e) => handleAdditionalFieldChange(index, 'title', e.target.value)}
+                      />
+                      <br />
+                      <input
+                        type="file"
+                        className='form-control'
+                        accept="application/pdf"
+                        required
+                        onChange={(e) => handleAdditionalFieldChange(index, 'file', e.target.files[0])}
+                      />
+                      <br />
+                      <button className='btn btn-primary' type='submit'> Submit </button>
+                    </form>
+                  </div>
+                ))}
+                <br />
+                <button className='btn btn-primary' onClick={handleAddFieldClick}>Add Another PDF Submission Field</button>
               </div>
             )}
           </>

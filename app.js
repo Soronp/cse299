@@ -4,21 +4,23 @@ const mongoose = require("mongoose");
 app.use(express.json());
 const cors = require("cors");
 app.use(cors());
-app.use("/files",express.static("files"))
+app.use("/files", express.static("files"));
 
-//MONGODB connection
-const mongoURL = "mongodb+srv://soronp:soronpass123@cluster0.aqrefet.mongodb.net/"
+// MONGODB connection
+const mongoURL =
+  "mongodb+srv://soronp:soronpass123@cluster0.aqrefet.mongodb.net/";
 
 mongoose
-    .connect(mongoURL, {
-        useNewUrlParser: true,
-    })
-    .then(() => {
-        console.log("Connected to a database");
-    })
-    .catch((e) => console.log(e));
+  .connect(mongoURL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true, // Adding this option for avoiding deprecation warnings
+  })
+  .then(() => {
+    console.log("Connected to the database");
+  })
+  .catch((e) => console.log(e));
 
-//multer
+// Multer
 const multer = require("multer");
 
 const storage = multer.diskStorage({
@@ -30,36 +32,37 @@ const storage = multer.diskStorage({
     cb(null, uniqueSuffix + file.originalname);
   },
 });
-  
+
 require("./pdfDetails");
 const PdfSchema = mongoose.model("PdfDetails");
 const upload = multer({ storage: storage });
 
 app.post("/upload-files", upload.single("file"), async (req, res) => {
   console.log(req.file);
-  const title = req.body.title;
-  const fileName = req.file.filename;
+  const { title } = req.body; // Destructure the title from req.body
+  const { filename } = req.file; // Destructure the filename from req.file
   try {
-    await PdfSchema.create({ title: title, pdf: fileName });
+    await PdfSchema.create({ title, pdf: filename }); // Use the destructured variables
     res.send({ status: "ok" });
   } catch (error) {
-    res.json({ status: error });
+    res.json({ status: error.message }); // Send error message
   }
 });
 
 app.get("/get-files", async (req, res) => {
   try {
-    PdfSchema.find({}).then((data) => {
-      res.send({ status: "ok", data: data });
-    });
-  } catch (error) {}
+    const data = await PdfSchema.find({}); // Wait for the data retrieval
+    res.send({ status: "ok", data: data });
+  } catch (error) {
+    res.json({ status: error.message }); // Send error message
+  }
 });
 
-//apis
+// APIs
 app.get("/", async (req, res) => {
-    res.send("Success");
-});
-app.listen(5000, () => {
-    console.log("Server Started");
+  res.send("Success");
 });
 
+app.listen(5000, () => {
+  console.log("Server Started");
+});
